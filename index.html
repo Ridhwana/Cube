@@ -5,54 +5,71 @@
   </head>
   <body>
     <script src="js/three.min.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script src="js/alex_brush_regular.typeface.js"></script>
+
     <script>
 
 // code goes here
 
-    // Create the scene and set the scene size. 
-      var scene = new THREE.Scene();
+// standard global variables
+var container, scene, camera, renderer, controls;
 
-      var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+function init() {
+    // SCENE
+    scene = new THREE.Scene();
 
-    // Create a renderer and add it to the DOM
-    // window.innerWidth, window.innerHeight, sets the scenes size
-      var renderer = new THREE.WebGLRenderer();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    // Set the background color of the scene.
-      renderer.setClearColorHex(0x990000, 1);
-      document.body.appendChild(renderer.domElement);
+    // CAMERA
+    var SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
+    var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+    camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+    scene.add(camera);
+    camera.position.set(0,0,1000);
+    camera.lookAt(scene.position);
+    renderer = new THREE.WebGLRenderer( {antialias:true} );
+    renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+    renderer.setClearColorHex(0x990000, 1);
+    document.body.appendChild( renderer.domElement );
 
-// adding cube geometry. It is typically used for creating a cube or irregular quadrilateral of the dimensions provided with the 'width', 'height', and 'depth' constructor arguments.
-    // CubeGeometry(width, height, depth, widthSegments, heightSegments, depthSegments)
-      var geometry = new THREE.CubeGeometry(1,1,1);
-      var material = new THREE.MeshLambertMaterial({color: 0x00CCFF});
-      var cube = new THREE.Mesh(geometry, material);
-      scene.add(cube);
+    // CONTROLS
+    controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-      // var gridHelper = new THREE.GridHelper( 40, 1 );
-      // gridHelper.position = new THREE.Vector3( 10, 10, 0 );
-      // gridHelper.rotation = new THREE.Euler( 15, 0, 0 );
-      // gridHelper.setColors(0x3399F,0xFF00FF)
-      // scene.add( gridHelper );
+    // LIGHT
+    var light = new THREE.PointLight(0xffffff);
+    light.position.set(0,0,1000);
+    scene.add(light);
 
-      var geometry = new THREE.RingGeometry( 1, 5, 32 );
-      var material = new THREE.MeshLambertMaterial( { color: 0x000000, side: THREE.DoubleSide } );
-      var mesh = new THREE.Mesh( geometry, material );
-      scene.add( mesh );
-      camera.position.z = 5;
+    // add 3D text default
+    var material = new THREE.MeshPhongMaterial({
+        color: 0xdddddd
+    });
+    var textGeom = new THREE.TextGeometry( 'Hello, World!', {
+        font: 'alex brush',
+        size: 60
+    });
 
-// Renders the scene and updates the render as needed. 
-      var render = function () {
-        // The requestAnimationFrame() function uses a newer browser API that delegates redraws to the browser. This has some pretty cool benefits, but primarily it makes sure the browser isn’t drawing your animation unnecessarily if that tab isn’t currently selected
-        requestAnimationFrame(render);
+    var textMesh = new THREE.Mesh( textGeom, material );
 
-        cube.rotation.x += 0.1;
-        cube.rotation.y += 0.1;
-    // Render the scene.
-        renderer.render(scene, camera);
-      };
+    textGeom.computeBoundingBox();
+    var textWidth = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
+    
+    textMesh.position.set( -0.5 * textWidth, 100, 0 );
+    scene.add( textMesh );
 
-      render();
+}
+
+function render() {
+    renderer.render( scene, camera );
+}
+
+function animate() {
+    window.requestAnimationFrame( animate );
+    render();
+}
+
+init();
+animate();
+
     </script>
   </body>
 </html>
