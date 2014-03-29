@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <title>My first Three.js app</title>
+    <style>canvas { width: 100%; height: 100% }</style>
+  </head>
+  <body>
+    <script src="js/three.min.js"></script>
+    <script>
+
+// code goes here
+
+    // Create the scene and set the scene size. 
+      var scene = new THREE.Scene();
+
+      var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+    // Create a renderer and add it to the DOM
+    // window.innerWidth, window.innerHeight, sets the scenes size
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    // Set the background color of the scene.
+      renderer.setClearColorHex(0x990000, 1);
+      document.body.appendChild(renderer.domElement);
+
+// adding cube geometry. It is typically used for creating a cube or irregular quadrilateral of the dimensions provided with the 'width', 'height', and 'depth' constructor arguments.
+    // CubeGeometry(width, height, depth, widthSegments, heightSegments, depthSegments)
+      var geometry = new THREE.CubeGeometry(1,1,1);
+      var material = new THREE.MeshLambertMaterial({color: 0x00CCFF});
+      var cube = new THREE.Mesh(geometry, material);
+      scene.add(cube);
+
+      // var gridHelper = new THREE.GridHelper( 40, 1 );
+      // gridHelper.position = new THREE.Vector3( 10, 10, 0 );
+      // gridHelper.rotation = new THREE.Euler( 15, 0, 0 );
+      // gridHelper.setColors(0x3399F,0xFF00FF)
+      // scene.add( gridHelper );
+
+      var geometry = new THREE.RingGeometry( 1, 5, 32 );
+      var material = new THREE.MeshLambertMaterial( { color: 0x000000, side: THREE.DoubleSide } );
+      var mesh = new THREE.Mesh( geometry, material );
+      scene.add( mesh );
+      camera.position.z = 5;
+
+// Renders the scene and updates the render as needed. 
+      var render = function () {
+        // The requestAnimationFrame() function uses a newer browser API that delegates redraws to the browser. This has some pretty cool benefits, but primarily it makes sure the browser isn’t drawing your animation unnecessarily if that tab isn’t currently selected
+        requestAnimationFrame(render);
+
+        cube.rotation.x += 0.1;
+        cube.rotation.y += 0.1;
+    // Render the scene.
+        renderer.render(scene, camera);
+      };
+
+      render();
+    </script>
+  </body>
+</html>
